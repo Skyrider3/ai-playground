@@ -3,7 +3,7 @@ import { ConversationHistory, Persona } from '../types';
 import { SYSTEM_INSTRUCTIONS } from '../constants';
 
 const client = new OpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY
+  apiKey: import.meta.env.VITE_OPENROUTER_API_KEY
 });
 
 /**
