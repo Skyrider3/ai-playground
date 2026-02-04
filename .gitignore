@@ -211,3 +211,6 @@ __marimo__/
 .codex
 .opencode
 frontend-build.zip
+# Node
+node_modules/
+dist/
