@@ -35,7 +35,15 @@ const App: React.FC = () => {
   const judgeMessages = simulation.messages.filter(m => m.sender === Persona.JUDGE);
 
   const stopSimulation = useCallback(() => {
-    setSimulation(prev => ({ ...prev, isActive: false, turn: 'IDLE', isThinking: false }));
+    setSimulation(prev => ({
+      ...prev,
+      isActive: false,
+      turn: 'IDLE',
+      isThinking: false,
+      messages: [],
+      roundCount: 0,
+      error: null
+    }));
   }, []);
 
   const startSimulation = useCallback(() => {
