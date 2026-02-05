@@ -102,16 +102,14 @@ export const AVAILABLE_MODELS = [
   { label: 'Claude 3 Haiku', value: 'anthropic/claude-3-haiku' },
 
   // Google
-  { label: 'Gemma 3n 4B', value: 'google/gemma-3n-e4b-it:free' },
+  { label: 'Gemma 3 12B', value: 'google/gemma-3-12b-it' },
 
   // Meta Llama
   { label: 'Llama 3.1 8B', value: 'meta-llama/llama-3.1-8b-instruct' },
-  { label: 'Llama 3.2 3B', value: 'meta-llama/llama-3.2-3b-instruct:free' },
   { label: 'Llama 3.2 1B', value: 'meta-llama/llama-3.2-1b-instruct' },
 
   // Qwen
-  { label: 'Qwen3 4b', value: 'qwen/qwen3-4b:free' },
-  { label: 'Qwen2.5', value: 'qwen/qwen-2.5-coder-32b-instruct' },
+  { label: 'Qwen3 30b', value: 'qwen/qwen/qwen3-30b-a3b' },
   { label: 'Qwen3 Embedding 8B', value: 'qwen/qwen3-embedding-8b' },
 
   // Nvidia
