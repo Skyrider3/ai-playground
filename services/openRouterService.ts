@@ -4,6 +4,7 @@ import { SYSTEM_INSTRUCTIONS } from '../constants';
 
 // Debug: Log API key status (masked for security)
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+console.log('[OpenRouter] Initializing...');
 console.log('[OpenRouter] API Key status:', apiKey ? `Present (${apiKey.slice(0, 10)}...${apiKey.slice(-4)})` : 'MISSING');
 
 if (!apiKey) {
@@ -29,48 +30,78 @@ export const generatePersonaResponse = async (
   try {
     const systemInstruction = SYSTEM_INSTRUCTIONS[persona];
 
-    let contextPrompt = "";
+    let userContent = "";
 
     if (persona === Persona.JUDGE) {
-      contextPrompt = `Review this recent conversation:\n${lastMessage}\n\nProvide your evaluation.`;
+      userContent = `Review this recent conversation:\n${lastMessage}\n\nProvide your evaluation.`;
     } else {
-      contextPrompt = `Conversation History:\n${history.map(h => h.content).join('\n')}\n\nRespond to the last message as ${persona}.`;
+      userContent = `Conversation History:\n${history.map(h => h.content).join('\n')}\n\nRespond to the last message as ${persona}.`;
     }
 
     // Log request details
     console.log(`[OpenRouter][${requestId}] Request details:`, {
       model,
       persona,
-      instructionLength: systemInstruction?.length || 0,
-      contextLength: contextPrompt.length,
+      systemInstructionLength: systemInstruction?.length || 0,
+      userContentLength: userContent.length,
       historyMessages: history.length
     });
 
-    const result = client.callModel({
+    // Use the correct SDK method: chat.send()
+    const response = await client.chat.send({
       model: model,
-      instructions: systemInstruction,
-      input: contextPrompt,
+      messages: [
+        {
+          role: 'system',
+          content: systemInstruction
+        },
+        {
+          role: 'user',
+          content: userContent
+        }
+      ],
       temperature: 1.0,
-      maxOutputTokens: 500
+      maxTokens: 500
     });
 
-    console.log(`[OpenRouter][${requestId}] callModel returned, awaiting getText()...`);
+    console.log(`[OpenRouter][${requestId}] Response received:`, {
+      id: response.id,
+      model: response.model,
+      choicesCount: response.choices?.length || 0
+    });
 
-    // Log the raw result object for debugging
-    console.log(`[OpenRouter][${requestId}] Result object type:`, typeof result);
-    console.log(`[OpenRouter][${requestId}] Result object keys:`, Object.keys(result || {}));
+    // Extract text from response
+    const content = response.choices?.[0]?.message?.content;
 
-    const text = await result.getText();
+    // Handle both string and array content types
+    let text: string;
+    if (typeof content === 'string') {
+      text = content;
+    } else if (Array.isArray(content)) {
+      // Extract text from content array
+      text = content
+        .filter((item): item is { type: 'text'; text: string } => item.type === 'text')
+        .map(item => item.text)
+        .join('');
+    } else {
+      console.error(`[OpenRouter][${requestId}] No content in response:`, JSON.stringify(response, null, 2));
+      throw new Error('No content in API response');
+    }
 
-    console.log(`[OpenRouter][${requestId}] Success! Response length: ${text?.length || 0}`);
-    console.log(`[OpenRouter][${requestId}] Response preview: ${text?.slice(0, 100)}...`);
+    if (!text) {
+      console.error(`[OpenRouter][${requestId}] Empty content in response:`, JSON.stringify(response, null, 2));
+      throw new Error('Empty content in API response');
+    }
+
+    console.log(`[OpenRouter][${requestId}] Success! Response length: ${text.length}`);
+    console.log(`[OpenRouter][${requestId}] Response preview: ${text.slice(0, 100)}...`);
 
     return text;
   } catch (error) {
     console.error(`[OpenRouter][${requestId}] Error for ${persona}:`, {
       name: (error as Error)?.name,
       message: (error as Error)?.message,
-      stack: (error as Error)?.stack?.split('\n').slice(0, 3).join('\n')
+      stack: (error as Error)?.stack?.split('\n').slice(0, 5).join('\n')
     });
 
     // Log additional error details if available
@@ -82,8 +113,11 @@ export const generatePersonaResponse = async (
       if ('status' in err) {
         console.error(`[OpenRouter][${requestId}] Status:`, err.status);
       }
+      if ('body' in err) {
+        console.error(`[OpenRouter][${requestId}] Body:`, err.body);
+      }
     }
 
-    throw error; // Re-throw to let the caller handle it
+    throw error;
   }
 };
