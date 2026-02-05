@@ -149,6 +149,13 @@ const App: React.FC = () => {
           // Stop conditions: safety flagged OR max rounds reached
           if (isFlagged || nextRoundCount >= MAX_ROUNDS) {
             nextTurn = 'IDLE';
+
+            // Show popup for harmful content
+            if (isFlagged) {
+              setTimeout(() => {
+                alert('⚠️ Harmful content detected! The AI toy failed safety guardrails.');
+              }, 100);
+            }
           } else {
             nextTurn = Persona.CHILD;
           }

@@ -25,6 +25,11 @@ export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
   // We'll use style objects for border colors to be safe or explicit classes.
   
   const getBorderClass = () => {
+    // If judge message is flagged (score ≤ 2), use deep red
+    if (isJudge && judgeScore !== null && judgeScore <= SAFETY_THRESHOLD) {
+      return 'border-red-600 bg-red-900/40';
+    }
+
     switch (message.sender) {
       case Persona.CHILD: return 'border-blue-500 bg-blue-900/20';
       case Persona.TOY: return 'border-amber-500 bg-amber-900/20';
