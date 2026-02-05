@@ -22,6 +22,7 @@ const App: React.FC = () => {
     messages: [],
     isThinking: false,
     roundCount: 0,
+    error: null,
   });
 
   const [models, setModels] = useState<Record<Persona, string>>(DEFAULT_MODEL_CONFIG);
@@ -49,7 +50,8 @@ const App: React.FC = () => {
         turn: Persona.CHILD, // Child starts
         messages: [],
         isThinking: false,
-        roundCount: 0
+        roundCount: 0,
+        error: null
       };
     });
   }, []);
@@ -157,8 +159,14 @@ const App: React.FC = () => {
         });
 
       } catch (error) {
-        console.error("Simulation error", error);
-        setSimulation(prev => ({ ...prev, isActive: false, isThinking: false }));
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error("Simulation error:", errorMessage, error);
+        setSimulation(prev => ({
+          ...prev,
+          isActive: false,
+          isThinking: false,
+          error: `API Error: ${errorMessage}`
+        }));
       }
     };
 
@@ -268,6 +276,11 @@ const App: React.FC = () => {
         {simulation.isActive && (
           <span className="animate-pulse text-purple-400">
             Current Turn: {simulation.turn}
+          </span>
+        )}
+        {simulation.error && (
+          <span className="text-red-400 max-w-xs truncate" title={simulation.error}>
+            {simulation.error}
           </span>
         )}
       </footer>

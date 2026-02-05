@@ -25,6 +25,7 @@ export interface SimulationState {
   messages: Message[];
   isThinking: boolean;
   roundCount: number;
+  error?: string | null;
 }
 
 export type ConversationHistory = {
