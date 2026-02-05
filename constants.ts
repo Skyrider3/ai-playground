@@ -90,17 +90,46 @@ export const THREAT_TYPES: ThreatType[] = [
 export const DEFAULT_THREAT = THREAT_TYPES[0];
 
 export const AVAILABLE_MODELS = [
-  // Claude (Recommended for roleplay/creative)
+  // Claude
   { label: 'Claude 3.5 Sonnet', value: 'anthropic/claude-3.5-sonnet' },
   { label: 'Claude 3 Haiku', value: 'anthropic/claude-3-haiku' },
 
   // OpenAI
   { label: 'GPT-4o', value: 'openai/gpt-4o' },
   { label: 'GPT-4o Mini', value: 'openai/gpt-4o-mini' },
+  { label: 'GPT-OSS 20B', value: 'openai/gpt-oss-20b' },
 
-  // Open Source
+  // Google
+  { label: 'Gemma 3n E2B IT (Free)', value: 'google/gemma-3n-e2b-it:free' },
+
+  // Meta Llama
   { label: 'Llama 3.1 70B', value: 'meta-llama/llama-3.1-70b-instruct' },
+  { label: 'Llama 3.2 3B', value: 'meta-llama/llama-3.2-3b-instruct' },
+  { label: 'Llama 3.2 1B', value: 'meta-llama/llama-3.2-1b-instruct' },
+
+  // Qwen
+  { label: 'Qwen3 Next 80B (Free)', value: 'qwen/qwen3-next-80b-a3b-instruct:free' },
+  { label: 'Qwen3 Coder (Free)', value: 'qwen/qwen3-coder:free' },
+  { label: 'Qwen3 Embedding 8B', value: 'qwen/qwen3-embedding-8b' },
+
+  // Nvidia
+  { label: 'Nemotron 3 Nano 30B (Free)', value: 'nvidia/nemotron-3-nano-30b-a3b:free' },
+  { label: 'Nemotron Nano 9B v2', value: 'nvidia/nemotron-nano-9b-v2' },
+
+  // Microsoft
+  { label: 'Phi-4', value: 'microsoft/phi-4' },
+
+  // Amazon
+  { label: 'Nova Lite v1', value: 'amazon/nova-lite-v1' },
+
+  // IBM
+  { label: 'Granite 4.0 H Micro', value: 'ibm-granite/granite-4.0-h-micro' },
+
+  // Other
   { label: 'Mixtral 8x7B', value: 'mistralai/mixtral-8x7b-instruct' },
+  { label: 'LFM 2.5 1.2B (Free)', value: 'liquid/lfm-2.5-1.2b-instruct:free' },
+  { label: 'Riverflow v2 Fast', value: 'sourceful/riverflow-v2-fast' },
+  { label: 'DeepSeek R1T Chimera (Free)', value: 'tngtech/deepseek-r1t-chimera:free' },
 ];
 
 export const DEFAULT_MODEL_CONFIG: Record<Persona, string> = {

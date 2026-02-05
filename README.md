@@ -1,4 +1,4 @@
-# AI Playground Trio
+# AI Playground
 
 A child safety testing simulator that evaluates AI toy responses through automated multi-agent conversations.
 

@@ -190,7 +190,7 @@ const App: React.FC = () => {
              </div>
              <div>
                <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400">
-                 AI Playground Trio
+                 AI Playground
                </h1>
                <p className="text-gray-400 text-xs tracking-wide uppercase">Child • Toy • Judge</p>
              </div>
