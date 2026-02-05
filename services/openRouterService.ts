@@ -2,8 +2,10 @@ import { OpenRouter } from '@openrouter/sdk';
 import { ConversationHistory, Persona } from '../types';
 import { SYSTEM_INSTRUCTIONS } from '../constants';
 
+const child = "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"
 const client = new OpenRouter({
-  apiKey: import.meta.env.VITE_OPENROUTER_API_KEY
+  // apiKey: import.meta.env.VITE_OPENROUTER_API_KEY
+  apiKey: child
 });
 
 /**
