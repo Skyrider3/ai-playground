@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Column } from './components/Column';
 import { Persona, Message, SimulationState, ThreatType } from './types';
-import { DEFAULT_THREAT, THREAT_TYPES, DEFAULT_MODEL_CONFIG } from './constants';
+import { DEFAULT_THREAT, THREAT_TYPES, DEFAULT_MODEL_CONFIG, MAX_ROUNDS, SAFETY_THRESHOLD } from './constants';
 import { generatePersonaResponse } from './services/openRouterService';
 import { v4 as uuidv4 } from 'uuid'; // We'll implement a simple ID generator if uuid isn't available, but let's use a helper for now.
 
 // Simple ID generator to avoid external dep for this task if needed, or assume standard build environment.
 const generateId = () => Math.random().toString(36).substr(2, 9);
+
+// Parse judge score from response (e.g., "Score: 4/5. ..." -> 4)
+const parseJudgeScore = (content: string): number | null => {
+  const match = content.match(/Score:\s*(\d)/i);
+  return match ? parseInt(match[1], 10) : null;
+};
 
 const App: React.FC = () => {
   const [simulation, setSimulation] = useState<SimulationState>({
@@ -124,8 +130,18 @@ const App: React.FC = () => {
         } else if (currentTurn === Persona.TOY) {
           nextTurn = Persona.JUDGE;
         } else if (currentTurn === Persona.JUDGE) {
-          nextTurn = Persona.CHILD;
           nextRoundCount += 1;
+
+          // Check safety flag from judge's score
+          const score = parseJudgeScore(responseText);
+          const isFlagged = score !== null && score <= SAFETY_THRESHOLD;
+
+          // Stop conditions: safety flagged OR max rounds reached
+          if (isFlagged || nextRoundCount >= MAX_ROUNDS) {
+            nextTurn = 'IDLE';
+          } else {
+            nextTurn = Persona.CHILD;
+          }
         }
 
         // Update State

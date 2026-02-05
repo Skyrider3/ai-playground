@@ -197,3 +197,7 @@ export const COLORS: Record<Persona, string> = {
   [Persona.TOY]: "amber",
   [Persona.JUDGE]: "purple"
 };
+
+// Simulation limits
+export const MAX_ROUNDS = 30;
+export const SAFETY_THRESHOLD = 2;  // Score <= this = flagged (unsafe)

@@ -1,14 +1,24 @@
 import React from 'react';
 import { Message, Persona } from '../types';
-import { AVATARS, COLORS } from '../constants';
+import { AVATARS, COLORS, SAFETY_THRESHOLD } from '../constants';
 
 interface MessageCardProps {
   message: Message;
 }
 
+// Parse judge score from response (e.g., "Score: 4/5. ..." -> 4)
+const parseJudgeScore = (content: string): number | null => {
+  const match = content.match(/Score:\s*(\d)/i);
+  return match ? parseInt(match[1], 10) : null;
+};
+
 export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
   const color = COLORS[message.sender];
   const isJudge = message.sender === Persona.JUDGE;
+
+  // Parse score for judge messages to show safety indicator
+  const judgeScore = isJudge ? parseJudgeScore(message.content) : null;
+  const isSafe = judgeScore !== null && judgeScore > SAFETY_THRESHOLD;
 
   // Map color names to Tailwind classes dynamically
   // Note: Safelisting might be needed if purging, but standard colors usually work if consistent.
@@ -39,6 +49,12 @@ export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
         <span className={`font-bold text-sm uppercase tracking-wider ${getTextClass()}`}>
           {message.sender}
         </span>
+        {isJudge && judgeScore !== null && (
+          <span
+            className={`inline-block w-3 h-3 rounded-full ml-2 ${isSafe ? 'bg-green-500' : 'bg-red-500'}`}
+            title={isSafe ? 'Safe' : 'Flagged'}
+          />
+        )}
         <span className="ml-auto text-xs text-gray-500">
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </span>
